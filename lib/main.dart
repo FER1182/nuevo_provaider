@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:nuevo_provaider/item.dart';
+import 'package:nuevo_provaider/modelo/carrito.dart';
+import 'package:nuevo_provaider/modelo/carrito_widget.dart';
+import 'package:nuevo_provaider/modelo/producto.dart';
+import 'package:provider/provider.dart';
 
 import 'mocks/productos.dart';
 
@@ -10,12 +15,16 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider<Carrito>(
+      create: (context) => Carrito(),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: PaginaPrincipal(),
       ),
-      home: PaginaPrincipal(),
     );
   }
 }
@@ -25,18 +34,19 @@ class PaginaPrincipal extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: Text('Listado de productos'),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => CarritoWidget())),
+                child: Text(
+                  'Carrito',
+                  style: TextStyle(color: Colors.white),
+                ))
+          ],
         ),
         body: ListView.builder(
-            itemBuilder: (context, index) => Row(
-                  children: [
-                    Column(
-                      children: [
-                        Text(productos[index].nombre),
-                        Text(productos[index].precio.toString()),
-                      ],
-                    ),
-                    ElevatedButton(onPressed: null, child: Text('Agregar')),
-                  ],
-                )),
+          itemCount: productos.length,
+          itemBuilder: (context, index) => Item(productos[index]),
+        ),
       );
 }
